@@ -18,12 +18,15 @@ int main()
                "4 - Para exibir por_order\n"
                "5 - Para exibir reverso\n"
                "6 - Para saber a quantidade de elementos pares\n"
+               "7 - Para saber o antecessor de um valor\n"
+               "8 - Para saber o pai de um valor\n"
                "9 - Para remover um valor da arvore\n"
                "10 - Para saber a soma dos elementos pares\n"
                "11 - Para podar a arvore\n"
                "12 - Para dobrar os valores da arvore\n"
                "13 - Para buscar um valor na arvore\n"
-               "14 - Para imprimir os des\n"
+               "14 - Para imprimir os descendentes de um numero\n"
+               "15 - Para saber a altura da arvore\n"
                "99 - Para sair do programa\n");
 
         scanf("%d", &opcao);
@@ -59,6 +62,16 @@ int main()
             valor = qtd_par(a);
             printf("[%d]\n", valor);
             break;
+        case 7:
+            printf("Digite o valor para saber seu antecessor:\n");
+            scanf("%d", &valor);
+            imprimir_antecessor(a, valor);
+            break;
+        case 8:
+            printf("Digite o valor saber seu pai:\n");
+            scanf("%d", &valor);
+            imprimir_pai(a, valor);
+            break;
         case 9:
             printf("Digite o valor para ser removido da arvore:\n");
             scanf("%d", &valor);
@@ -90,6 +103,17 @@ int main()
             }
 
             break;
+        case 14:
+            printf("Digite o valor para que sejam printados seus descendentes:\n");
+            scanf("%d", &valor);
+            descendentes(a, valor);
+            printf("\n");
+
+            break;
+        case 15:
+            valor = altura(a);
+            printf("A altura e [%d]\n", valor);
+
         case 99:
             printf("Saindo...");
             break;

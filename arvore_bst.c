@@ -81,6 +81,13 @@ arvore menor(arvore a){
     return a;   
 }
 
+arvore maior(arvore a){
+    while(a && a->dir != NULL){
+        a = a->dir;
+    }
+    return a;   
+}
+
 arvore remover(arvore a, int valor){
     if(a == NULL){
         return a;
@@ -91,18 +98,23 @@ arvore remover(arvore a, int valor){
     } else if(valor > a->valor){
         a->dir = remover(a->dir, valor);
     } else{
-        if(a->esq == NULL){
+        if(a->esq == NULL && a->dir == NULL){
+            free(a);
+            return NULL;
+
+        } else if(a->esq == NULL && a->dir != NULL){
             arvore aux = a->dir;
             free(a);
             return aux;
-        } else if (a->esq != NULL){
+        } else if (a->esq != NULL && a->dir == NULL){
             arvore aux = a->esq;
             free(a);
             return aux;
-        } 
-        arvore aux = menor(a->dir);
-        a->valor = aux->valor;
-        a->dir = remover(a->dir, aux->valor);
+        }else{
+            arvore aux = menor(a->dir);
+            a->valor = aux->valor;
+            a->dir = remover(a->dir, aux->valor);
+        }
     }
 
     return a;
@@ -181,14 +193,116 @@ int busca(arvore a, int valor){
     } 
 }
 
-void descendentes(arvore a, int valor){
-     if(valor < a->valor){
-        descendentes(a->esq, valor);
+arvore buscar(arvore a, int valor){
+    if(a == NULL){
+        return NULL;
+    }
+
+    if(valor < a->valor){
+        buscar(a->esq, valor);
     } else if(valor > a->valor){
-        descendentes(a->dir, valor);
+        buscar(a->dir, valor);
     } else if(valor == a->valor){
-       in_order(a);
+        return a;
     } 
 }
 
+void descendentes(arvore a, int valor){
+    arvore aux = buscar(a, valor);
 
+    if(aux != NULL){
+        if(aux->esq != NULL){
+            in_order(aux->esq);
+        }
+        if(aux->dir != NULL){
+            in_order(aux->dir);
+        }
+        if(aux->esq == NULL && aux->dir == NULL){
+            printf("Valor nao possui descendentes");
+        }
+    } else{
+        printf("Valor nao encontrado");
+    }
+
+}
+
+
+int altura(arvore a){
+    if(a == NULL){
+        return 0;
+    }else{
+        int esq = altura(a->esq);
+        int dir = altura(a->dir);
+
+        if(esq>dir){
+            return esq + 1;
+        } else{
+            return dir + 1;
+        }
+    }
+}
+
+arvore encontrar_pai(arvore a, int valor, arvore pai){
+    if(a == NULL){
+        return NULL;
+    }
+    if(a->valor == valor){
+        return pai;
+    }
+    
+    arvore aux = encontrar_pai(a->esq, valor, a);
+
+    if(aux != NULL){
+        return aux;
+    } else{
+        aux = encontrar_pai(a->dir, valor, a);
+        return aux;
+    }
+
+}
+ 
+void imprimir_pai(arvore a, int valor){
+    arvore aux = encontrar_pai(a, valor, NULL);
+
+    if(aux == NULL){
+        printf("[-1]\n");
+    } else{
+        printf("[%d]\n", aux->valor);
+    }
+
+
+}
+
+arvore encontrar_antecessor(arvore a, int valor){
+    arvore antecessor = NULL;
+    
+    while(a != NULL){
+        if(valor > a->valor){
+            antecessor = a;
+            a = a->dir;
+        } else if(valor < a->valor){
+            a = a->esq;
+        } else{
+            if(a->esq != NULL){
+                antecessor = a->esq;
+                while(antecessor->dir != NULL){
+                    antecessor = antecessor->dir;
+                }
+            }
+            break;
+        }
+    }
+    return antecessor;
+}
+
+void imprimir_antecessor(arvore a, int valor){
+    arvore aux;
+    
+    aux = encontrar_antecessor(a, valor);
+
+    if(aux == NULL){
+        printf("[-1]\n");
+    } else{
+        printf("[%d]\n", aux->valor);
+    }
+}
