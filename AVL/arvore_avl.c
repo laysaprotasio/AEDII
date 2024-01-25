@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "arvore_avl.h"
 
-arvore rotacao_simples_direita(arvore raiz){
+arvore rotacao_simples_direita(arvore raiz){ // testada
 
     //inicializando
     arvore p, u, t1, t2, t3;
@@ -22,7 +22,7 @@ arvore rotacao_simples_direita(arvore raiz){
     return u;
 }
 
-arvore rotacao_simples_esquerda(arvore raiz){
+arvore rotacao_simples_esquerda(arvore raiz){ // testada
     
     //inicializando
     arvore p, u, t1, t2, t3;
@@ -91,10 +91,10 @@ arvore rotacionar(arvore raiz){
                         aux->esq->fb = 0;
                         break;
 
-                    case 1:
+                    case 1: // testada
                         aux->fb = 0;
-                        aux->dir->fb = 1;
-                        aux->esq->fb = 0;
+                        aux->dir->fb = 0;
+                        aux->esq->fb = -1;
                         break;
                 }
                 
@@ -129,7 +129,7 @@ arvore rotacionar(arvore raiz){
                     aux->esq->fb = 0;
                     break;
 
-                    case 0:
+                    case 0: // testada
                     aux->fb = 0;
                     aux->dir->fb = 0;
                     aux->esq->fb = 0;
@@ -204,6 +204,91 @@ arvore inserir_avl(arvore raiz, int valor, int *cresceu){
         }
         return raiz;
     }
+}
+
+
+arvore remover_avl(arvore raiz, int valor, int *diminuiu){
+    if(raiz == NULL){
+        *diminuiu = 0;
+        return NULL;
+    }
+
+    if(raiz->valor == valor){
+
+        *diminuiu = 1;
+
+        if(raiz->esq == NULL && raiz->dir == NULL){
+            free(raiz);
+            return NULL;
+
+        } else if(raiz->esq == NULL && raiz->dir != NULL){
+            arvore aux = raiz->dir;
+            free(raiz);
+            return aux;
+        } else if (raiz->esq != NULL && raiz->dir == NULL){
+            arvore aux = raiz->esq;
+            free(raiz);
+            return aux;
+        }else{
+            arvore aux = maior_avl(raiz->esq);
+            raiz->valor = aux->valor;
+            raiz->esq = remover_avl(raiz->esq, aux->valor, diminuiu);
+        }
+
+    } else{
+        
+        if(valor > raiz->valor){
+            raiz->dir = remover_avl(raiz->dir, valor, diminuiu);
+
+            if(*diminuiu == 1){
+                switch(raiz->fb){
+                    case 0:
+                    raiz->fb = -1;
+                    *diminuiu = 0;
+                    break;
+
+                    case -1: 
+                    raiz = rotacionar(raiz);
+
+                    case 1:
+                    raiz->fb = 0;
+                    *diminuiu = 1;
+                    break;
+    
+                }
+            }
+
+        } else{
+            raiz->esq = remover_avl(raiz->esq, valor, diminuiu);
+
+            if(*diminuiu == 1){
+                switch(raiz->fb){
+                    case 0:
+                    raiz->fb = 1;
+                    *diminuiu = 0;
+                    break;
+
+                    case -1: 
+                    raiz->fb = 0;
+                    *diminuiu = 1;
+                    break;
+
+                    case 1:
+                    raiz = rotacionar(raiz);
+    
+                }
+            }
+        }
+    }
+
+    return raiz;
+}
+
+arvore maior_avl(arvore raiz){
+    while(raiz && raiz->dir != NULL){
+        raiz = raiz->dir;
+    }
+    return raiz;   
 }
 
 void pre_order_avl(arvore a){
