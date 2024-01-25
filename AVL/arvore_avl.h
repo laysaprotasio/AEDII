@@ -19,5 +19,7 @@ arvore rotacionar(arvore raiz);
 void pre_order_avl(arvore a);
 void in_order_avl(arvore a);
 void pos_order_avl(arvore a);
+arvore remover_avl(arvore raiz, int valor, int *diminuiu);
+arvore maior_avl(arvore raiz);
 
 #endif
